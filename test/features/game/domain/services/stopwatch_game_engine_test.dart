@@ -20,6 +20,14 @@ void main() {
       final engine = StopwatchGameEngine();
 
       expect(
+        engine.classifyDelta(const Duration(milliseconds: 10)),
+        PrecisionResult.goal,
+      );
+      expect(
+        engine.classifyDelta(const Duration(milliseconds: 11)),
+        PrecisionResult.nearMiss,
+      );
+      expect(
         engine.classifyDelta(const Duration(milliseconds: 40)),
         PrecisionResult.nearMiss,
       );

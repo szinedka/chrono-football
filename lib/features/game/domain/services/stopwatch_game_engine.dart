@@ -99,7 +99,7 @@ class StopwatchGameEngine {
   GameTarget nextTarget({Random? random}) {
     final rng = random ?? Random();
     const pool = <Duration>[
-      Duration.zero,
+      Duration(milliseconds: 100),
       Duration(seconds: 1),
       Duration(seconds: 2),
       Duration(seconds: 3),
