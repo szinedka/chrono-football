@@ -8,7 +8,7 @@ import 'package:chrono_football/features/game/domain/entities/round_result.dart'
 class StopwatchGameEngine {
   StopwatchGameEngine({
     this.tickInterval = const Duration(milliseconds: 10),
-    this.exactWindow = const Duration(milliseconds: 0),
+    this.exactWindow = const Duration(milliseconds: 10),
     this.nearWindow = const Duration(milliseconds: 60),
     this.saveWindow = const Duration(milliseconds: 150),
   });
