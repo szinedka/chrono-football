@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chrono_football/features/game/domain/entities/precision_result.dart';
 import 'package:chrono_football/features/game/domain/services/stopwatch_game_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -47,6 +49,24 @@ void main() {
         engine.classifyDelta(const Duration(milliseconds: 400)),
         PrecisionResult.fail,
       );
+    });
+
+    test('returns deterministic and valid targets with injected Random', () {
+      final engine = StopwatchGameEngine();
+      final seededA = engine.nextTarget(random: Random(7));
+      final seededB = engine.nextTarget(random: Random(7));
+
+      const pool = <Duration>{
+        Duration(milliseconds: 100),
+        Duration(seconds: 1),
+        Duration(seconds: 2),
+        Duration(seconds: 3),
+        Duration(seconds: 5),
+        Duration(seconds: 10),
+      };
+
+      expect(seededA.value, seededB.value);
+      expect(pool.contains(seededA.value), isTrue);
     });
   });
 }
