@@ -27,7 +27,7 @@ class MainMenuScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'CHRONO\\nFOOTBALL',
+                        'CHRONO\nFOOTBALL',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.headlineMedium,
                       ),

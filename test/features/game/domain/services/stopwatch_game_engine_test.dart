@@ -24,7 +24,15 @@ void main() {
         PrecisionResult.nearMiss,
       );
       expect(
+        engine.classifyDelta(const Duration(milliseconds: 60)),
+        PrecisionResult.nearMiss,
+      );
+      expect(
         engine.classifyDelta(const Duration(milliseconds: 120)),
+        PrecisionResult.save,
+      );
+      expect(
+        engine.classifyDelta(const Duration(milliseconds: 150)),
         PrecisionResult.save,
       );
       expect(
