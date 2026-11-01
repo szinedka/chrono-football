@@ -1,69 +1,29 @@
 # Chrono Football
 
-Cross-platform smartwatch game concept built with Flutter.
+Chrono Football is a smartwatch football game inspired by childhood stopwatch
+games. This repository is a monorepo for its shared specifications and future
+platform-specific implementations.
 
-## Architecture (Clean + Modular)
+The first intended release targets Garmin vívoactive 5 through Connect IQ.
+Wear OS and Apple Watch are future targets. No platform implementation has
+been added yet.
+
+## Documentation
+
+- [Gameplay specification](docs/gameplay-spec.md): agreed rules and open
+  product decisions.
+- [Implementation plan](docs/implementation-plan.md): small, dependency-aware
+  tasks for the Garmin-first implementation and reusable game contracts.
+
+## Planned repository layout
 
 ```text
-lib/
-  core/
-    di/
-    navigation/
-    theme/
-    utils/
-  features/
-    game/
-      data/
-        datasources/
-        repositories/
-      domain/
-        entities/
-        repositories/
-        services/
-      presentation/
-        controllers/
-        screens/
-        widgets/
+docs/                  Gameplay and implementation documentation
+spec/conformance/      Shared, platform-neutral rule cases
+platforms/garmin/      Garmin Connect IQ app
 ```
 
-## Recommended dependencies
-
-- `flutter_riverpod` for state management
-- `go_router` for navigation
-- `shared_preferences` for local persistence
-
-## Game models
-
-- `GameState`: current mode, timer, target, score, streak, stats
-- `GameTarget`: selected target stopwatch value
-- `RoundResult`: elapsed time, delta, precision classification, points
-- `GameSettings`: mute + visual mode
-
-## Stopwatch / game engine
-
-`StopwatchGameEngine` provides:
-
-- 10ms game tick stream for UI updates
-- start/stop/reset control
-- precision scoring (`goal`, `nearMiss`, `save`, `fail`)
-- random target generation for quick rounds
-
-## First playable MVP
-
-Implemented screens:
-
-- Main menu with smartwatch-sized large touch targets
-- Quick Play screen with:
-  - target display
-  - large START/STOP action button
-  - live stopwatch
-  - precision feedback banner
-  - score, streak, average precision and reset/menu controls
-
-## Run
-
-```bash
-flutter pub get
-flutter run
-flutter test
-```
+Only `docs/` exists today. Additional platform directories and shared
+conformance cases will be added when their implementation work begins. Each
+platform can use its own tools and UI while following the shared game
+specification.
