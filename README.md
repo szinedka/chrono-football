@@ -6,7 +6,7 @@ platform-specific implementations.
 
 The first intended release targets Garmin vívoactive 5 through Connect IQ.
 Wear OS and Apple Watch are future targets. The Garmin app currently provides
-a chronometer and a Possession Matrix preview; a complete match is not yet
+a two-player Possession Matrix practice flow; a complete match is not yet
 implemented.
 
 ## Documentation
@@ -46,10 +46,12 @@ chronometer pauses when stopped and resumes from that value on the next start.
 The shared conversion truncates to hundredths for display and the rule
 components. The command stays attached until the app exits.
 
-When stopped, the screen previews the Possession Matrix action for the last
-hundredths digit. For example, `00:00:95` shows `LONG BALL`. Each stop is
-evaluated independently as a matrix preview: shooting, possession changes,
-scores and match flow are not implemented yet.
+The first player is `P1`. The top line shows whose turn it is and whether
+they are passing, shooting or saving. When the chronometer stops, the result
+appears below it and the player indicator updates if possession changes.
+During a goalkeeper attempt, the running time is hidden until the defender
+stops it. This is a practice flow: match setup, match endings and the
+Even/Odd variant are not implemented yet.
 
 By default the script looks for
 `~/.config/chrono-football/developer_key.der`. Set `CONNECT_IQ_DEVELOPER_KEY`
@@ -78,8 +80,8 @@ stop reports its accumulated milliseconds and an action ID unique to that
 chronometer instance. Starting, refreshing and invalid stops do not emit events.
 The stop is committed before the listener is called; listener errors propagate
 and do not undo or repeat the stop. The listener cannot start or stop the
-chronometer during notification. The preview listener translates these events
-into Possession Matrix outcomes; it does not manage a match.
+chronometer during notification. A separate session uses these events to
+manage the Possession Matrix practice flow.
 
 ## Planned repository layout
 

@@ -5,14 +5,14 @@ import Toybox.WatchUi;
 
 class ChronometerView extends WatchUi.View {
     private var _controller as ChronometerController;
-    private var _preview as PossessionMatrixListener;
+    private var _session as PossessionSession;
     private var _refreshTimer as Timer.Timer;
     private var _visible as Boolean;
 
-    function initialize(controller as ChronometerController, preview as PossessionMatrixListener) {
+    function initialize(controller as ChronometerController, session as PossessionSession) {
         View.initialize();
         _controller = controller;
-        _preview = preview;
+        _session = session;
         _refreshTimer = new Timer.Timer();
         _visible = false;
     }
@@ -41,23 +41,33 @@ class ChronometerView extends WatchUi.View {
     function onUpdate(dc as Graphics.Dc) as Void {
         var centerX = dc.getWidth() / 2;
         var centerY = dc.getHeight() / 2;
+        var running = _controller.isRunning();
+        var phase = _session.phase();
+        var turn = SessionLabels.turn(_session.actingPlayer(), phase);
         var status = "READY";
-        if (_controller.isRunning()) {
+        if (running) {
             status = "RUNNING";
         } else if (_controller.hasResult()) {
-            var outcome = _preview.lastOutcome();
-            status = outcome == null ? "STOPPED" : PossessionOutcomeLabel.text(outcome);
+            var moment = _session.lastMoment();
+            status = moment == null ? "STOPPED" : SessionLabels.moment(moment);
         }
+        var stopwatch = "--:--:--";
+        if (!running || phase != SessionPhase.GOALKEEPER) {
+            stopwatch = ChronometerFormat.format(_controller.displayMilliseconds());
+        }
+        var score = "P1 " + _session.p1Score().toString() + " : " +
+            _session.p2Score().toString() + " P2";
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
-        dc.drawText(centerX, centerY - 95, Graphics.FONT_SMALL,
-            "MATRIX PREVIEW", Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(centerX, centerY - 40, Graphics.FONT_MEDIUM,
-            ChronometerFormat.format(_controller.displayMilliseconds()),
-            Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(centerX, centerY + 25, Graphics.FONT_SMALL,
+        dc.drawText(centerX, centerY - 100, Graphics.FONT_SMALL,
+            turn, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(centerX, centerY - 45, Graphics.FONT_MEDIUM,
+            stopwatch, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(centerX, centerY + 15, Graphics.FONT_SMALL,
             status, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(centerX, centerY + 70, Graphics.FONT_SMALL,
+        dc.drawText(centerX, centerY + 60, Graphics.FONT_SMALL,
+            score, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(centerX, centerY + 100, Graphics.FONT_SMALL,
             "TAP OR PRESS", Graphics.TEXT_JUSTIFY_CENTER);
     }
 }

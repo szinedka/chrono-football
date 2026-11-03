@@ -11,9 +11,7 @@ module PossessionMatrix {
     }
 
     function resolve(hundredths as Number) as Outcome {
-        if (hundredths < 0 || hundredths > 99) {
-            throw new Lang.InvalidValueException("Hundredths must be between 0 and 99");
-        }
+        StopwatchValue.validateHundredths(hundredths);
 
         switch (hundredths % 10) {
             case 0:
