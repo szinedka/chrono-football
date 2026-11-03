@@ -8,7 +8,7 @@ function chronometerInputStartsAndStops(logger as Test.Logger) as Boolean {
     var listener = new RecordingChronometerListener();
     chronometer.setStopListener(listener.method(:onChronometerStopped));
     var controller = new ChronometerController(chronometer);
-    var view = new ChronometerView(controller);
+    var view = new ChronometerView(controller, new PossessionMatrixListener());
     var input = new ChronometerInputDelegate(controller, view);
     if (controller.isRunning() || controller.hasResult() ||
         !ChronometerFormat.format(controller.displayMilliseconds()).equals("00:00:00")) {
@@ -44,7 +44,7 @@ function chronometerInputStartsAndStops(logger as Test.Logger) as Boolean {
 function chronometerRefreshFollowsViewLifecycle(logger as Test.Logger) as Boolean {
     var clock = new FakeClock(100);
     var controller = new ChronometerController(new Chronometer(clock));
-    var view = new ChronometerView(controller);
+    var view = new ChronometerView(controller, new PossessionMatrixListener());
     var input = new ChronometerInputDelegate(controller, view);
     view.onShow();
     input.onSelect();
@@ -64,7 +64,7 @@ function chronometerUiKeepsStoppedValueAfterListenerFailure(logger as Test.Logge
     var listener = new FailingChronometerListener();
     chronometer.setStopListener(listener.method(:onChronometerStopped));
     var controller = new ChronometerController(chronometer);
-    var view = new ChronometerView(controller);
+    var view = new ChronometerView(controller, new PossessionMatrixListener());
     var input = new ChronometerInputDelegate(controller, view);
     view.onShow();
     input.onSelect();

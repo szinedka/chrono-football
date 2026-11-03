@@ -7,8 +7,11 @@ class ChronoFootballApp extends Application.AppBase {
     }
 
     function getInitialView() {
-        var controller = new ChronometerController(new Chronometer(new GarminClock()));
-        var view = new ChronometerView(controller);
+        var chronometer = new Chronometer(new GarminClock());
+        var preview = new PossessionMatrixListener();
+        chronometer.setStopListener(preview.method(:onChronometerStopped));
+        var controller = new ChronometerController(chronometer);
+        var view = new ChronometerView(controller, preview);
         return [view, new ChronometerInputDelegate(controller, view)];
     }
 }

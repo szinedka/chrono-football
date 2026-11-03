@@ -5,12 +5,14 @@ import Toybox.WatchUi;
 
 class ChronometerView extends WatchUi.View {
     private var _controller as ChronometerController;
+    private var _preview as PossessionMatrixListener;
     private var _refreshTimer as Timer.Timer;
     private var _visible as Boolean;
 
-    function initialize(controller as ChronometerController) {
+    function initialize(controller as ChronometerController, preview as PossessionMatrixListener) {
         View.initialize();
         _controller = controller;
+        _preview = preview;
         _refreshTimer = new Timer.Timer();
         _visible = false;
     }
@@ -39,12 +41,17 @@ class ChronometerView extends WatchUi.View {
     function onUpdate(dc as Graphics.Dc) as Void {
         var centerX = dc.getWidth() / 2;
         var centerY = dc.getHeight() / 2;
-        var status = _controller.isRunning() ? "RUNNING" :
-            (_controller.hasResult() ? "STOPPED" : "READY");
+        var status = "READY";
+        if (_controller.isRunning()) {
+            status = "RUNNING";
+        } else if (_controller.hasResult()) {
+            var outcome = _preview.lastOutcome();
+            status = outcome == null ? "STOPPED" : PossessionOutcomeLabel.text(outcome);
+        }
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
         dc.drawText(centerX, centerY - 95, Graphics.FONT_SMALL,
-            "CHRONO FOOTBALL", Graphics.TEXT_JUSTIFY_CENTER);
+            "MATRIX PREVIEW", Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(centerX, centerY - 40, Graphics.FONT_MEDIUM,
             ChronometerFormat.format(_controller.displayMilliseconds()),
             Graphics.TEXT_JUSTIFY_CENTER);

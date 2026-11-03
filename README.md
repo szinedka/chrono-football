@@ -6,7 +6,8 @@ platform-specific implementations.
 
 The first intended release targets Garmin vívoactive 5 through Connect IQ.
 Wear OS and Apple Watch are future targets. The Garmin app currently provides
-a basic chronometer; gameplay is not yet connected.
+a chronometer and a Possession Matrix preview; a complete match is not yet
+implemented.
 
 ## Documentation
 
@@ -45,6 +46,11 @@ chronometer pauses when stopped and resumes from that value on the next start.
 The shared conversion truncates to hundredths for display and the rule
 components. The command stays attached until the app exits.
 
+When stopped, the screen previews the Possession Matrix action for the last
+hundredths digit. For example, `00:00:95` shows `LONG BALL`. Each stop is
+evaluated independently as a matrix preview: shooting, possession changes,
+scores and match flow are not implemented yet.
+
 By default the script looks for
 `~/.config/chrono-football/developer_key.der`. Set `CONNECT_IQ_DEVELOPER_KEY`
 to use an existing key instead. You can create a key with the Monkey C
@@ -65,16 +71,15 @@ The chronometer measures elapsed milliseconds using Garmin's counter rather
 than UI refreshes. It accounts for signed 32-bit counter rollover, provided an
 individual interval is shorter than one full counter cycle (about 50 days).
 Counter resets cannot be distinguished from rollover. Device timing and
-sleep behavior still need real-watch verification. The chronometer is not yet
-connected to gameplay.
+sleep behavior still need real-watch verification.
 
 The chronometer can notify one optional stopped-event listener. Each valid
 stop reports its accumulated milliseconds and an action ID unique to that
 chronometer instance. Starting, refreshing and invalid stops do not emit events.
 The stop is committed before the listener is called; listener errors propagate
 and do not undo or repeat the stop. The listener cannot start or stop the
-chronometer during notification. The Possession Matrix exists as a separate
-rule component but is not yet wired to these events or displayed in the app.
+chronometer during notification. The preview listener translates these events
+into Possession Matrix outcomes; it does not manage a match.
 
 ## Planned repository layout
 
