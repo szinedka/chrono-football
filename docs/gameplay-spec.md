@@ -1,9 +1,9 @@
 # Gameplay specification
 
 This document records the agreed direction for Chrono Football. The Garmin app
-currently implements a limited Possession Matrix practice flow, not a complete
-match. Open decisions are listed separately and must not be treated as approved
-rules.
+currently implements the Possession Matrix goal-target mode; other modes are
+not yet implemented. Open decisions are listed separately and must not be
+treated as approved rules.
 
 ## Match setup
 
@@ -81,6 +81,7 @@ The `.00` result takes precedence over the other values ending in `0`.
 
 ### Goal target
 
+Before play, players select a target from 1 to 10 goals; the default is 3.
 The match ends when a player reaches the selected number of goals.
 
 ### Timed match
@@ -93,7 +94,7 @@ The match ends when a player reaches the selected number of goals.
 
 ## Open decisions
 
-- Selectable goal targets and match durations.
+- Selectable match durations.
 - The exact on-watch handover interaction and how it relates to pausing the
   match clock.
 - When and how the action chronometer resets, including for a new match.

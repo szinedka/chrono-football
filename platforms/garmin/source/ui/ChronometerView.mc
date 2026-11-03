@@ -43,7 +43,13 @@ class ChronometerView extends WatchUi.View {
         var centerY = dc.getHeight() / 2;
         var running = _controller.isRunning();
         var phase = _session.phase();
-        var turn = SessionLabels.turn(_session.actingPlayer(), phase);
+        var turn = "";
+        var winner = _session.winner();
+        if (winner != null) {
+            turn = SessionLabels.player(winner) + " WINS";
+        } else {
+            turn = SessionLabels.turn(_session.actingPlayer(), phase);
+        }
         var status = "READY";
         if (running) {
             status = "RUNNING";
@@ -68,6 +74,7 @@ class ChronometerView extends WatchUi.View {
         dc.drawText(centerX, centerY + 60, Graphics.FONT_SMALL,
             score, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(centerX, centerY + 100, Graphics.FONT_SMALL,
-            "TAP OR PRESS", Graphics.TEXT_JUSTIFY_CENTER);
+            _session.isFinished() ? "MATCH OVER" : "TAP OR PRESS",
+            Graphics.TEXT_JUSTIFY_CENTER);
     }
 }

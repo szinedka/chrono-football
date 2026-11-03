@@ -88,8 +88,8 @@ Open decisions block their dependent work.
 3. **Handover interaction:** agree how the watch enters and leaves handover,
    including attacker-to-goalkeeper and goalkeeper-to-attacker changes. Blocks
    the complete handover UI and match-clock integration.
-4. **Setup values:** approve available goal targets and match durations, and
-   any initial selection. Blocks release setup; tests may inject values.
+4. **Setup values — partly resolved:** goal targets range from 1 to 10, with
+   3 as the default. Match durations and their initial selection remain open.
 5. **Timed boundary:** specify how a stop or goal occurring at the exact
    duration boundary is ordered against match expiry. Expiry is immediate as
    specified; do not award an outcome after expiry.

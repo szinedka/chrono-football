@@ -11,7 +11,8 @@ module SessionPhase {
     enum Value {
         PASSING,
         SHOOTING,
-        GOALKEEPER
+        GOALKEEPER,
+        FINISHED
     }
 }
 
@@ -38,17 +39,25 @@ class PossessionSession {
     private var _lastActionId as Long;
     private var _p1Score as Number;
     private var _p2Score as Number;
+    private var _goalTarget as Number;
+    private var _winner as SessionPlayer.Id?;
 
-    function initialize() {
+    function initialize(goalTarget as Number) {
+        GoalTarget.validate(goalTarget);
         _attacker = SessionPlayer.P1;
         _phase = SessionPhase.PASSING;
         _lastMoment = null;
         _lastActionId = 0l;
         _p1Score = 0;
         _p2Score = 0;
+        _goalTarget = goalTarget;
+        _winner = null;
     }
 
     function actingPlayer() as SessionPlayer.Id {
+        if (isFinished()) {
+            throw new Lang.OperationNotAllowedException("Match has finished");
+        }
         return _phase == SessionPhase.GOALKEEPER ? otherPlayer(_attacker) : _attacker;
     }
 
@@ -68,7 +77,18 @@ class PossessionSession {
         return _p2Score;
     }
 
+    function isFinished() as Boolean {
+        return _phase == SessionPhase.FINISHED;
+    }
+
+    function winner() as SessionPlayer.Id? {
+        return _winner;
+    }
+
     function onChronometerStopped(event as ChronometerStoppedEvent) as Void {
+        if (isFinished()) {
+            throw new Lang.OperationNotAllowedException("Match has finished");
+        }
         if (event.getActionId() <= _lastActionId) {
             throw new Lang.OperationNotAllowedException("Stop event has already been processed");
         }
@@ -139,13 +159,21 @@ class PossessionSession {
                 _phase = SessionPhase.PASSING;
                 return SessionMoment.CORNER;
             case GoalkeeperRule.GOAL:
+                var score = 0;
                 if (_attacker == SessionPlayer.P1) {
                     _p1Score += 1;
+                    score = _p1Score;
                 } else {
                     _p2Score += 1;
+                    score = _p2Score;
                 }
-                _attacker = otherPlayer(_attacker);
-                _phase = SessionPhase.PASSING;
+                if (score >= _goalTarget) {
+                    _winner = _attacker;
+                    _phase = SessionPhase.FINISHED;
+                } else {
+                    _attacker = otherPlayer(_attacker);
+                    _phase = SessionPhase.PASSING;
+                }
                 return SessionMoment.GOAL;
             default:
                 throw new Lang.InvalidValueException("Unknown goalkeeper outcome");

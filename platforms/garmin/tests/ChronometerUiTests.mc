@@ -8,8 +8,9 @@ function chronometerInputStartsAndStops(logger as Test.Logger) as Boolean {
     var listener = new RecordingChronometerListener();
     chronometer.setStopListener(listener.method(:onChronometerStopped));
     var controller = new ChronometerController(chronometer);
-    var view = new ChronometerView(controller, new PossessionSession());
-    var input = new ChronometerInputDelegate(controller, view);
+    var session = new PossessionSession(GoalTarget.DEFAULT);
+    var view = new ChronometerView(controller, session);
+    var input = new ChronometerInputDelegate(controller, view, session);
     if (controller.isRunning() || controller.hasResult() ||
         !ChronometerFormat.format(controller.displayMilliseconds()).equals("00:00:00")) {
         return false;
@@ -44,8 +45,9 @@ function chronometerInputStartsAndStops(logger as Test.Logger) as Boolean {
 function chronometerRefreshFollowsViewLifecycle(logger as Test.Logger) as Boolean {
     var clock = new FakeClock(100);
     var controller = new ChronometerController(new Chronometer(clock));
-    var view = new ChronometerView(controller, new PossessionSession());
-    var input = new ChronometerInputDelegate(controller, view);
+    var session = new PossessionSession(GoalTarget.DEFAULT);
+    var view = new ChronometerView(controller, session);
+    var input = new ChronometerInputDelegate(controller, view, session);
     view.onShow();
     input.onSelect();
     view.requestRefresh();
@@ -64,8 +66,9 @@ function chronometerUiKeepsStoppedValueAfterListenerFailure(logger as Test.Logge
     var listener = new FailingChronometerListener();
     chronometer.setStopListener(listener.method(:onChronometerStopped));
     var controller = new ChronometerController(chronometer);
-    var view = new ChronometerView(controller, new PossessionSession());
-    var input = new ChronometerInputDelegate(controller, view);
+    var session = new PossessionSession(GoalTarget.DEFAULT);
+    var view = new ChronometerView(controller, session);
+    var input = new ChronometerInputDelegate(controller, view, session);
     view.onShow();
     input.onSelect();
     clock.setMilliseconds(350);

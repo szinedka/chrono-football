@@ -6,8 +6,8 @@ platform-specific implementations.
 
 The first intended release targets Garmin vívoactive 5 through Connect IQ.
 Wear OS and Apple Watch are future targets. The Garmin app currently provides
-a two-player Possession Matrix practice flow; a complete match is not yet
-implemented.
+a two-player Possession Matrix goal-target match. Other match modes are not
+yet implemented.
 
 ## Documentation
 
@@ -39,19 +39,25 @@ key, then run:
 ./scripts/garmin-run.sh
 ```
 
-Tap the screen or press the upper watch button to start and stop. The display
+Choose a goal target from 1 to 10 before the match; the default is 3. Tap the
+screen or press the upper watch button to start and stop. The display
 shows minutes, seconds and hundredths (`MM:SS:HH`) and refreshes periodically;
 the stopped result comes from the clock, not the display refresh. The
 chronometer pauses when stopped and resumes from that value on the next start.
 The shared conversion truncates to hundredths for display and the rule
 components. The command stays attached until the app exits.
 
+For now, the lower-button Back action is ignored in both the picker and match.
+The right-swipe Back gesture is ignored too. Garmin system actions, such as
+reserved long presses, may still be handled by the watch.
+
 The first player is `P1`. The top line shows whose turn it is and whether
 they are passing, shooting or saving. When the chronometer stops, the result
 appears below it and the player indicator updates if possession changes.
 During a goalkeeper attempt, the running time is hidden until the defender
-stops it. This is a practice flow: match setup, match endings and the
-Even/Odd variant are not implemented yet.
+stops it. When a player reaches the target, the winner is shown and the
+match ends. Exit and reopen the app to start another match; the timed match
+and Even/Odd variant are not implemented yet.
 
 By default the script looks for
 `~/.config/chrono-football/developer_key.der`. Set `CONNECT_IQ_DEVELOPER_KEY`
@@ -81,7 +87,7 @@ chronometer instance. Starting, refreshing and invalid stops do not emit events.
 The stop is committed before the listener is called; listener errors propagate
 and do not undo or repeat the stop. The listener cannot start or stop the
 chronometer during notification. A separate session uses these events to
-manage the Possession Matrix practice flow.
+manage the Possession Matrix match.
 
 ## Planned repository layout
 

@@ -1,8 +1,19 @@
 import Toybox.Lang;
 
 module SessionLabels {
+    function player(player as SessionPlayer.Id) as String {
+        switch (player) {
+            case SessionPlayer.P1:
+                return "P1";
+            case SessionPlayer.P2:
+                return "P2";
+            default:
+                throw new Lang.InvalidValueException("Unknown player");
+        }
+    }
+
     function turn(player as SessionPlayer.Id, phase as SessionPhase.Value) as String {
-        var playerLabel = player == SessionPlayer.P1 ? "P1" : "P2";
+        var playerLabel = SessionLabels.player(player);
         switch (phase) {
             case SessionPhase.PASSING:
                 return playerLabel + " PASS";
