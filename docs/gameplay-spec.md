@@ -1,9 +1,9 @@
 # Gameplay specification
 
 This document records the agreed direction for Chrono Football. The Garmin app
-currently implements the Possession Matrix goal-target mode; other modes are
-not yet implemented. Open decisions are listed separately and must not be
-treated as approved rules.
+currently implements Possession Matrix with goal-target and timed endings.
+The Even/Odd variant is not yet implemented. Open decisions are listed
+separately and must not be treated as approved rules.
 
 ## Match setup
 
@@ -12,6 +12,7 @@ treated as approved rules.
   the match as the first attacker.
 - Players choose a passing variant and a match-ending mode before the match.
   Either passing variant can be combined with either match-ending mode.
+- Goal-target mode is selected by default.
 
 ## Reading the stopwatch
 
@@ -23,7 +24,8 @@ is `6`. Milliseconds are truncated to hundredths: `953 ms` gives `95`, while
 The action chronometer pauses when stopped. The next start resumes from the
 stopped value; time spent stopped is not added.
 
-The match clock and the chronometer used for individual actions are separate.
+In timed matches, this accumulated chronometer time is also the match time.
+There is no separate match timer or additional time display.
 
 ## Possession and passing
 
@@ -86,17 +88,18 @@ The match ends when a player reaches the selected number of goals.
 
 ### Timed match
 
-- The match clock counts forward from zero to the selected duration.
-- It pauses during handovers and resumes when the next player starts their
-  chronometer turn.
+- Before play, players select 1, 3 or 5 minutes; the default is 3 minutes.
+- The main chronometer counts forward from zero towards the selected duration;
+  no second timer or time display is needed.
+- Match time pauses on every stop and resumes on the next start, including
+  when the same player takes consecutive turns.
 - The match ends immediately when the selected duration is reached, even if an
-  action is in progress. A tied match ends in a draw.
+  action is in progress. An action stopped at or after the limit does not count.
+  A tied match ends in a draw.
 
 ## Open decisions
 
-- Selectable match durations.
-- The exact on-watch handover interaction and how it relates to pausing the
-  match clock.
+- The exact on-watch handover interaction.
 - When and how the action chronometer resets, including for a new match.
 - When the consecutive-pass count resets in Even/Odd mode.
 - Whether to add penalties or other football moments and, if so, their rules.

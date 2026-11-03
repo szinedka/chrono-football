@@ -7,8 +7,9 @@ function chronometerInputStartsAndStops(logger as Test.Logger) as Boolean {
     var chronometer = new Chronometer(clock);
     var listener = new RecordingChronometerListener();
     chronometer.setStopListener(listener.method(:onChronometerStopped));
-    var controller = new ChronometerController(chronometer);
-    var session = new PossessionSession(GoalTarget.DEFAULT);
+    var session = new PossessionSession(
+        new MatchSettings(MatchMode.GOAL_TARGET, GoalTarget.DEFAULT));
+    var controller = new ChronometerController(chronometer, session);
     var view = new ChronometerView(controller, session);
     var input = new ChronometerInputDelegate(controller, view, session);
     if (controller.isRunning() || controller.hasResult() ||
@@ -44,8 +45,9 @@ function chronometerInputStartsAndStops(logger as Test.Logger) as Boolean {
 (:test)
 function chronometerRefreshFollowsViewLifecycle(logger as Test.Logger) as Boolean {
     var clock = new FakeClock(100);
-    var controller = new ChronometerController(new Chronometer(clock));
-    var session = new PossessionSession(GoalTarget.DEFAULT);
+    var session = new PossessionSession(
+        new MatchSettings(MatchMode.GOAL_TARGET, GoalTarget.DEFAULT));
+    var controller = new ChronometerController(new Chronometer(clock), session);
     var view = new ChronometerView(controller, session);
     var input = new ChronometerInputDelegate(controller, view, session);
     view.onShow();
@@ -65,8 +67,9 @@ function chronometerUiKeepsStoppedValueAfterListenerFailure(logger as Test.Logge
     var chronometer = new Chronometer(clock);
     var listener = new FailingChronometerListener();
     chronometer.setStopListener(listener.method(:onChronometerStopped));
-    var controller = new ChronometerController(chronometer);
-    var session = new PossessionSession(GoalTarget.DEFAULT);
+    var session = new PossessionSession(
+        new MatchSettings(MatchMode.GOAL_TARGET, GoalTarget.DEFAULT));
+    var controller = new ChronometerController(chronometer, session);
     var view = new ChronometerView(controller, session);
     var input = new ChronometerInputDelegate(controller, view, session);
     view.onShow();

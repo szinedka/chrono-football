@@ -45,19 +45,18 @@ class Chronometer {
             throw new Lang.OperationNotAllowedException("Chronometer is not running");
         }
 
-        var elapsed = _clock.nowMilliseconds().toLong() - startedAt.toLong();
-        if (elapsed < 0l) {
-            // Correct for the 32-bit counter crossing its signed boundary.
-            elapsed += 4294967296l;
-        }
-        return _accumulated + elapsed;
+        return elapsedSince(startedAt, _clock.nowMilliseconds());
     }
 
     function stop() as Long {
         if (_notifying) {
             throw new Lang.OperationNotAllowedException("Cannot stop during stop notification");
         }
-        var elapsed = elapsedMilliseconds();
+        var startedAt = _startedAt;
+        if (startedAt == null) {
+            throw new Lang.OperationNotAllowedException("Chronometer is not running");
+        }
+        var elapsed = elapsedSince(startedAt, _clock.nowMilliseconds());
         _accumulated = elapsed;
         _startedAt = null;
         var actionId = _nextActionId;
@@ -72,6 +71,23 @@ class Chronometer {
             }
         }
         return elapsed;
+    }
+
+    function cancel() as Void {
+        if (_notifying || !isRunning()) {
+            throw new Lang.OperationNotAllowedException("Chronometer cannot be cancelled");
+        }
+        _accumulated = elapsedMilliseconds();
+        _startedAt = null;
+    }
+
+    private function elapsedSince(startedAt as Number, reading as Number) as Long {
+        var elapsed = reading.toLong() - startedAt.toLong();
+        if (elapsed < 0l) {
+            // Correct for the 32-bit counter crossing its signed boundary.
+            elapsed += 4294967296l;
+        }
+        return _accumulated + elapsed;
     }
 
     private function notifyStopped(listener as ChronometerStopListener, event as ChronometerStoppedEvent) as Void {

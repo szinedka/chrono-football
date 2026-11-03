@@ -20,6 +20,22 @@ implementing it. Tasks with unmet prerequisites or owner decisions must remain
 blocked; use test-only values when a component can be tested independently.
 Do not silently turn test values into product defaults.
 
+The owner prefers manual verification and has asked not to add automated tests.
+Existing tests may remain; do not add new automated tests or test infrastructure
+unless the owner changes that preference. This overrides older task wording that
+calls for adding automated tests.
+
+## Current handoff status
+
+- The Garmin chronometer, stopped event, Possession Matrix, shooting and
+  goalkeeper rules, goal-target ending and timed-mode prototype exist. Timed
+  mode uses the main chronometer and pauses on every stop.
+- Even/Odd, configurable device layouts, explicit rematch behavior and a
+  second simulator profile are not complete. Physical-watch validation is not
+  confirmed.
+- The lower-button Back action is temporarily ignored. Keep existing worktree
+  changes and do not invent answers to the remaining gameplay decisions.
+
 ## Proposed boundaries
 
 ```text
@@ -35,7 +51,7 @@ Platform clock -> chronometer -> stopped-value event
                                       |
           presentation model -> device-specific watch UI
 
-Match clock and lifecycle adapters feed the session separately.
+The session checks the match limit against the same chronometer time.
 ```
 
 - **Chronometer:** starts and stops using an injected clock, then emits one
@@ -87,12 +103,16 @@ Open decisions block their dependent work.
    session transitions that depend on the counter.
 3. **Handover interaction:** agree how the watch enters and leaves handover,
    including attacker-to-goalkeeper and goalkeeper-to-attacker changes. Blocks
-   the complete handover UI and match-clock integration.
-4. **Setup values — partly resolved:** goal targets range from 1 to 10, with
-   3 as the default. Match durations and their initial selection remain open.
-5. **Timed boundary:** specify how a stop or goal occurring at the exact
-   duration boundary is ordered against match expiry. Expiry is immediate as
-   specified; do not award an outcome after expiry.
+   the complete handover UI, but not the timing rule.
+4. **Setup values — resolved:** goal targets range from 1 to 10, default 3;
+   timed matches offer 1, 3 or 5 minutes, default 3. Goal-target mode is selected
+   by default.
+5. **Timed boundary — resolved:** expiry takes precedence at the exact limit;
+   an action stopped at or after that point does not count.
+6. **Timed clock — resolved:** use only the accumulated action chronometer and
+   its existing display. It pauses on every stop and resumes on every start;
+   the match ends at the configured limit. No second clock or time display is
+   needed.
 
 Ask the owner one focused question at a time. Update the gameplay specification
 when a decision is approved, then update the relevant conformance cases. Until
@@ -204,10 +224,11 @@ display and rule input use the same converted value.
 timing and error behavior separately under A05. Rollover-safe elapsed-time
 calculation belongs to C03, not this adapter.
 
-**C07 — Implement a match clock.** Prerequisites: C01, B03. Add a separate
-count-up clock with start, pause and resume; accept duration as configuration.
-**Done:** fake-clock checks prove elapsed active time excludes pauses and is
-independent of the action chronometer. No match transitions are added here.
+**C07 — Reuse chronometer time for the match.** Prerequisites: C01, B03.
+Use accumulated action-chronometer time for the configured match duration;
+remove separate match-clock state and the extra time display. Reuse the
+existing refresh mechanism to check the limit while running. **Done:** elapsed
+match time pauses on every stop and resumes on every start.
 
 ### D. Pure football rules
 
@@ -279,11 +300,13 @@ Model required changes of acting player as explicit transitions; same-player
 turns must not be mistaken for handovers. **Done:** the next player is visible
 to the presentation layer and no action starts for the wrong player.
 
-**E09 — Connect the timed match.** Prerequisites: C07, E08, owner decisions
-3–5. Pause at approved handovers, resume at the next player's action start,
-and end immediately at the configured duration, including mid-action.
-**Done:** the result is a draw when tied; no late action changes a completed
-match, including the approved exact-boundary case.
+**E09 — Connect the timed match.** Prerequisites: C07, E01, owner decisions
+4–6. Use the same accumulated chronometer time for the match; pause it on every
+stop and resume on every start. End at the configured duration, including
+mid-action. **Done:** a tied match is a draw; a stop at or after the limit
+does not affect the score or other match state. Use clock readings, not refresh
+counts, to enforce the limit. Keep the existing chronometer hidden during a
+blind goalkeeper attempt and do not add another time display.
 
 **E10 — Exercise complete match sequences.** Prerequisites: B06, C05, E04–E09.
 Run conformance scenarios for both passing variants and both ending modes.

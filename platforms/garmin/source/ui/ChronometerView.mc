@@ -19,6 +19,7 @@ class ChronometerView extends WatchUi.View {
 
     function onShow() as Void {
         _visible = true;
+        _controller.refresh();
         updateRefreshTimer();
     }
 
@@ -35,23 +36,30 @@ class ChronometerView extends WatchUi.View {
     }
 
     function requestRefresh() as Void {
+        _controller.refresh();
+        if (_session.isFinished()) {
+            _refreshTimer.stop();
+        }
         WatchUi.requestUpdate();
     }
 
     function onUpdate(dc as Graphics.Dc) as Void {
+        _controller.refresh();
         var centerX = dc.getWidth() / 2;
         var centerY = dc.getHeight() / 2;
         var running = _controller.isRunning();
         var phase = _session.phase();
         var turn = "";
         var winner = _session.winner();
-        if (winner != null) {
-            turn = SessionLabels.player(winner) + " WINS";
+        if (_session.isFinished()) {
+            turn = winner == null ? "DRAW" : SessionLabels.player(winner) + " WINS";
         } else {
             turn = SessionLabels.turn(_session.actingPlayer(), phase);
         }
         var status = "READY";
-        if (running) {
+        if (_session.timedOut()) {
+            status = "TIME UP";
+        } else if (running) {
             status = "RUNNING";
         } else if (_controller.hasResult()) {
             var moment = _session.lastMoment();

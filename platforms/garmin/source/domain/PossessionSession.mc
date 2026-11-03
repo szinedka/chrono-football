@@ -39,19 +39,20 @@ class PossessionSession {
     private var _lastActionId as Long;
     private var _p1Score as Number;
     private var _p2Score as Number;
-    private var _goalTarget as Number;
+    private var _settings as MatchSettings;
     private var _winner as SessionPlayer.Id?;
+    private var _timedOut as Boolean;
 
-    function initialize(goalTarget as Number) {
-        GoalTarget.validate(goalTarget);
+    function initialize(settings as MatchSettings) {
         _attacker = SessionPlayer.P1;
         _phase = SessionPhase.PASSING;
         _lastMoment = null;
         _lastActionId = 0l;
         _p1Score = 0;
         _p2Score = 0;
-        _goalTarget = goalTarget;
+        _settings = settings;
         _winner = null;
+        _timedOut = false;
     }
 
     function actingPlayer() as SessionPlayer.Id {
@@ -85,12 +86,46 @@ class PossessionSession {
         return _winner;
     }
 
+    function isTimed() as Boolean {
+        return _settings.mode() == MatchMode.TIMED;
+    }
+
+    function timedOut() as Boolean {
+        return _timedOut;
+    }
+
+    function timeLimitMilliseconds() as Long {
+        return _settings.durationMilliseconds();
+    }
+
+    function updateElapsed(elapsed as Long) as Void {
+        StopwatchValue.validateMilliseconds(elapsed);
+        if (isFinished() || !isTimed() || elapsed < timeLimitMilliseconds()) {
+            return;
+        }
+        if (_p1Score > _p2Score) {
+            _winner = SessionPlayer.P1;
+        } else if (_p2Score > _p1Score) {
+            _winner = SessionPlayer.P2;
+        } else {
+            _winner = null;
+        }
+        _timedOut = true;
+        _phase = SessionPhase.FINISHED;
+    }
+
     function onChronometerStopped(event as ChronometerStoppedEvent) as Void {
         if (isFinished()) {
             throw new Lang.OperationNotAllowedException("Match has finished");
         }
         if (event.getActionId() <= _lastActionId) {
             throw new Lang.OperationNotAllowedException("Stop event has already been processed");
+        }
+
+        updateElapsed(event.getElapsedMilliseconds());
+        if (isFinished()) {
+            _lastActionId = event.getActionId();
+            return;
         }
 
         var hundredths = StopwatchValue.hundredths(event.getElapsedMilliseconds());
@@ -167,7 +202,8 @@ class PossessionSession {
                     _p2Score += 1;
                     score = _p2Score;
                 }
-                if (score >= _goalTarget) {
+                if (_settings.mode() == MatchMode.GOAL_TARGET &&
+                    score >= _settings.goalTarget()) {
                     _winner = _attacker;
                     _phase = SessionPhase.FINISHED;
                 } else {

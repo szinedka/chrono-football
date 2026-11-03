@@ -7,6 +7,6 @@ class ChronoFootballApp extends Application.AppBase {
     }
 
     function getInitialView() {
-        return [new GoalTargetPicker(), new GoalTargetPickerDelegate()];
+        return [new MatchModePicker(), new MatchModePickerDelegate()];
     }
 }

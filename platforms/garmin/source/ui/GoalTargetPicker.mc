@@ -2,39 +2,12 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-class GoalTargetFactory extends WatchUi.PickerFactory {
-    function initialize() {
-        PickerFactory.initialize();
-    }
-
-    function getSize() as Number {
-        return GoalTarget.MAX - GoalTarget.MIN + 1;
-    }
-
-    private function valueForIndex(index as Number) as Number {
-        if (index < 0 || index >= getSize()) {
-            throw new Lang.InvalidValueException("Invalid goal target index");
-        }
-        return GoalTarget.MIN + index;
-    }
-
-    function getValue(index as Number) as Object? {
-        return valueForIndex(index);
-    }
-
-    function getDrawable(index as Number, selected as Boolean) as WatchUi.Drawable? {
-        return new WatchUi.Text({
-            :text => valueForIndex(index).toString(),
-            :font => Graphics.FONT_NUMBER_MILD,
-            :color => Graphics.COLOR_WHITE,
-            :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-            :locY => WatchUi.LAYOUT_VALIGN_CENTER
-        });
-    }
-}
-
 class GoalTargetPicker extends WatchUi.Picker {
     function initialize() {
+        var values = new Array<Number>[GoalTarget.MAX - GoalTarget.MIN + 1];
+        for (var index = 0; index < values.size(); index += 1) {
+            values[index] = GoalTarget.MIN + index;
+        }
         var title = new WatchUi.Text({
             :text => "GOALS TO WIN",
             :font => Graphics.FONT_TINY,
@@ -44,7 +17,7 @@ class GoalTargetPicker extends WatchUi.Picker {
         });
         Picker.initialize({
             :title => title,
-            :pattern => [new GoalTargetFactory()],
+            :pattern => [new NumericOptionsFactory(values)],
             :defaults => [GoalTarget.DEFAULT - GoalTarget.MIN]
         });
     }

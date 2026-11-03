@@ -1,10 +1,14 @@
 import Toybox.Lang;
 
 module StopwatchValue {
-    function hundredths(milliseconds as Long) as Number {
+    function validateMilliseconds(milliseconds as Long) as Void {
         if (milliseconds < 0l) {
             throw new Lang.InvalidValueException("Elapsed time cannot be negative");
         }
+    }
+
+    function hundredths(milliseconds as Long) as Number {
+        validateMilliseconds(milliseconds);
         return ((milliseconds / 10l) % 100l).toNumber();
     }
 
