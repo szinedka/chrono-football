@@ -18,6 +18,9 @@ Gameplay uses the two hundredths digits after the decimal point. For example,
 if the display reads `00:02.46`, the two-digit value is `46` and its last digit
 is `6`.
 
+The action chronometer pauses when stopped. The next start resumes from the
+stopped value; time spent stopped is not added.
+
 The match clock and the chronometer used for individual actions are separate.
 
 ## Possession and passing
@@ -91,6 +94,7 @@ The match ends when a player reaches the selected number of goals.
 - Selectable goal targets and match durations.
 - The exact on-watch handover interaction and how it relates to pausing the
   match clock.
+- When and how the action chronometer resets, including for a new match.
 - When the consecutive-pass count resets in Even/Odd mode.
 - How elapsed time is converted to displayed hundredths at boundaries.
 - Whether to add penalties or other football moments and, if so, their rules.

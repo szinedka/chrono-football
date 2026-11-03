@@ -5,8 +5,8 @@ games. This repository is a monorepo for its shared specifications and future
 platform-specific implementations.
 
 The first intended release targets Garmin vívoactive 5 through Connect IQ.
-Wear OS and Apple Watch are future targets. The Garmin app currently contains
-only a welcome screen; gameplay has not been implemented.
+Wear OS and Apple Watch are future targets. The Garmin app currently provides
+a basic chronometer; gameplay has not been implemented.
 
 ## Documentation
 
@@ -30,7 +30,7 @@ installed SDK, set `CONNECT_IQ_SDK_HOME` to its root directory:
 CONNECT_IQ_SDK_HOME="/path/to/connectiq-sdk" ./scripts/garmin-simulator.sh
 ```
 
-This opens the simulator only. To build and run the welcome screen on the
+This opens the simulator only. To build and run the chronometer on the
 vívoactive 5 simulator, also install Java and configure a Connect IQ developer
 key, then run:
 
@@ -38,7 +38,12 @@ key, then run:
 ./scripts/garmin-run.sh
 ```
 
-The command stays attached to the simulator session until the app exits.
+Tap the screen or press the upper watch button to start and stop. The display
+shows minutes, seconds and hundredths (`MM:SS:HH`) and refreshes periodically;
+the stopped result comes from the clock, not the display refresh. The
+chronometer pauses when stopped and resumes from that value on the next start.
+The display truncates to hundredths; gameplay conversion rules are still
+undecided. The command stays attached until the app exits.
 
 By default the script looks for
 `~/.config/chrono-football/developer_key.der`. Set `CONNECT_IQ_DEVELOPER_KEY`
@@ -53,10 +58,11 @@ To run the Garmin unit tests, start the simulator first, then run:
 ./scripts/garmin-test.sh
 ```
 
-The clock exposes Garmin's millisecond counter directly rather than using UI
-refreshes. Its signed 32-bit readings can roll over, so the future chronometer
-must account for rollover when calculating elapsed time. Device timing and
-sleep behavior still need real-watch verification.
+The chronometer measures elapsed milliseconds using Garmin's counter rather
+than UI refreshes. It accounts for signed 32-bit counter rollover, provided an
+individual interval is shorter than one full counter cycle (about 50 days).
+Counter resets cannot be distinguished from rollover. Device timing and
+sleep behavior still need real-watch verification. The chronometer is not yet connected to gameplay.
 
 ## Planned repository layout
 

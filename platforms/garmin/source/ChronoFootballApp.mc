@@ -7,6 +7,8 @@ class ChronoFootballApp extends Application.AppBase {
     }
 
     function getInitialView() {
-        return [new WelcomeView()];
+        var controller = new ChronometerController(new Chronometer(new GarminClock()));
+        var view = new ChronometerView(controller);
+        return [view, new ChronometerInputDelegate(controller, view)];
     }
 }
