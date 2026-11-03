@@ -47,6 +47,17 @@ extension in VS Code using **Monkey C: Generate a Developer Key**. Keep the
 key private and backed up: Garmin requires the same key for app updates.
 Do not commit it to the repository.
 
+To run the Garmin unit tests, start the simulator first, then run:
+
+```bash
+./scripts/garmin-test.sh
+```
+
+The clock exposes Garmin's millisecond counter directly rather than using UI
+refreshes. Its signed 32-bit readings can roll over, so the future chronometer
+must account for rollover when calculating elapsed time. Device timing and
+sleep behavior still need real-watch verification.
+
 ## Planned repository layout
 
 ```text

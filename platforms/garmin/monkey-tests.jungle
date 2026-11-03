@@ -1,0 +1,2 @@
+project.manifest = manifest.xml
+base.sourcePath = source;source/ui;source/domain;source/platform;tests

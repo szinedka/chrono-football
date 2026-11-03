@@ -145,11 +145,11 @@ turns, possession, football outcomes, handovers and match completion.
 **Done:** payloads and ordering are documented; a stopped event identifies its
 action so a duplicate cannot be applied twice.
 
-**B03 — Define clock contracts.** Prerequisites: B01. Specify a monotonic
-elapsed-time source, chronometer start/stop/reset behavior and an injectable
-test clock. Specify handling of rollover and clock failure based on A05 before
-implementing the Garmin adapter. **Done:** invalid transitions and clock
-errors are explicit; no UI scheduler or wall-clock dependency is required.
+**B03 — Define clock contracts.** Prerequisites: B01. Specify a millisecond
+counter, chronometer start/stop/reset behavior and an injectable test clock.
+Garmin exposes a wrapping signed counter; the chronometer must account for
+rollover when calculating elapsed time. **Done:** invalid transitions and
+clock errors are explicit; no UI scheduler or wall-clock dependency is required.
 
 **B04 — Add passing conformance cases.** Prerequisites: B01. Add versioned,
 platform-neutral cases for every Possession Matrix digit and Even/Odd double
@@ -182,9 +182,10 @@ duplicate/invalid starts are explicitly rejected or reported and cannot
 replace its start timestamp.
 
 **C03 — Stop an action chronometer.** Prerequisites: C02. Compute elapsed
-time from start and stop clock readings and stop the action. **Done:** a
-second stop cannot produce another result; invalid stop and clock errors are
-explicitly reported. Verify delayed callbacks do not alter elapsed time.
+time from start and stop clock readings, including signed-counter rollover,
+and stop the action. **Done:** a second stop cannot produce another result;
+invalid stop and clock errors are explicitly reported. Verify delayed callbacks
+do not alter elapsed time. Intervals must be shorter than one counter cycle.
 
 **C04 — Publish stopped-value events.** Prerequisites: B02, C03. Publish
 exactly one event with action identity and measured elapsed time on a valid
@@ -196,10 +197,11 @@ decision 1. Implement the approved conversion separately from rules.
 **Done:** test exact boundaries, second/minute rollover, `00` and `99`; the
 display and rule input use the same converted value.
 
-**C06 — Implement the Garmin clock adapter.** Prerequisites: A05, B03.
-Implement the chosen Garmin time source, including verified rollover and
-error behavior. **Done:** it satisfies the clock contract in simulator and
-device checks; UI refresh frequency does not define elapsed time.
+**C06 — Implement the Garmin clock adapter.** Prerequisites: B03. Expose
+`System.getTimer()` as a millisecond counter without accumulating readings.
+**Done:** it satisfies the clock contract in the simulator; verify device
+timing and error behavior separately under A05. Rollover-safe elapsed-time
+calculation belongs to C03, not this adapter.
 
 **C07 — Implement a match clock.** Prerequisites: C01, B03. Add a separate
 count-up clock with start, pause and resume; accept duration as configuration.
