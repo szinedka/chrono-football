@@ -76,11 +76,12 @@ Use actual SDK conventions where they differ from the suggested test directory;
 document the resulting paths and commands. Do not add a generic plugin system,
 backend, high scores, multiplayer networking or unapproved gameplay features.
 
-## Owner decisions that block dependent work
+## Owner decisions
 
-1. **Hundredths conversion:** define truncation/rounding and exact boundary
-   behavior. Blocks production conversion and end-to-end outcome resolution;
-   pure rule tests can use supplied hundredths values meanwhile.
+Open decisions block their dependent work.
+
+1. **Hundredths conversion — resolved:** use the first two fractional digits,
+   truncating milliseconds, as specified in the gameplay document.
 2. **Even/Odd pass counter:** specify when it resets, including possession
    changes, shot awards, shots, corners and new attacks. Blocks the production
    session transitions that depend on the counter.
@@ -192,8 +193,8 @@ exactly one event with action identity and measured elapsed time on a valid
 stop. **Done:** listeners see no result on start or display refresh and cannot
 receive duplicate outcomes from repeated stops.
 
-**C05 — Convert elapsed time to hundredths.** Prerequisites: C04 and owner
-decision 1. Implement the approved conversion separately from rules.
+**C05 — Convert elapsed time to hundredths.** Prerequisites: C04 and resolved
+owner decision 1. Implement the approved conversion separately from rules.
 **Done:** test exact boundaries, second/minute rollover, `00` and `99`; the
 display and rule input use the same converted value.
 

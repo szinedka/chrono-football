@@ -11,7 +11,13 @@ class ChronometerController {
 
     function toggle() as Void {
         if (_chronometer.isRunning()) {
-            _lastElapsed = _chronometer.stop();
+            try {
+                _lastElapsed = _chronometer.stop();
+            } finally {
+                if (!_chronometer.isRunning()) {
+                    _lastElapsed = _chronometer.completedMilliseconds();
+                }
+            }
         } else {
             _chronometer.start();
             _lastElapsed = null;

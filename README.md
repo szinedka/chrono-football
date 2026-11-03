@@ -6,7 +6,7 @@ platform-specific implementations.
 
 The first intended release targets Garmin vívoactive 5 through Connect IQ.
 Wear OS and Apple Watch are future targets. The Garmin app currently provides
-a basic chronometer; gameplay has not been implemented.
+a basic chronometer; gameplay is not yet connected.
 
 ## Documentation
 
@@ -42,8 +42,8 @@ Tap the screen or press the upper watch button to start and stop. The display
 shows minutes, seconds and hundredths (`MM:SS:HH`) and refreshes periodically;
 the stopped result comes from the clock, not the display refresh. The
 chronometer pauses when stopped and resumes from that value on the next start.
-The display truncates to hundredths; gameplay conversion rules are still
-undecided. The command stays attached until the app exits.
+The shared conversion truncates to hundredths for display and the rule
+components. The command stays attached until the app exits.
 
 By default the script looks for
 `~/.config/chrono-football/developer_key.der`. Set `CONNECT_IQ_DEVELOPER_KEY`
@@ -58,11 +58,23 @@ To run the Garmin unit tests, start the simulator first, then run:
 ./scripts/garmin-test.sh
 ```
 
+The simulator may print `Unhandled Exception` for callback-failure cases that
+the tests deliberately catch. Check the final test summary for their status.
+
 The chronometer measures elapsed milliseconds using Garmin's counter rather
 than UI refreshes. It accounts for signed 32-bit counter rollover, provided an
 individual interval is shorter than one full counter cycle (about 50 days).
 Counter resets cannot be distinguished from rollover. Device timing and
-sleep behavior still need real-watch verification. The chronometer is not yet connected to gameplay.
+sleep behavior still need real-watch verification. The chronometer is not yet
+connected to gameplay.
+
+The chronometer can notify one optional stopped-event listener. Each valid
+stop reports its accumulated milliseconds and an action ID unique to that
+chronometer instance. Starting, refreshing and invalid stops do not emit events.
+The stop is committed before the listener is called; listener errors propagate
+and do not undo or repeat the stop. The listener cannot start or stop the
+chronometer during notification. The Possession Matrix exists as a separate
+rule component but is not yet wired to these events or displayed in the app.
 
 ## Planned repository layout
 

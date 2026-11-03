@@ -12,9 +12,12 @@ class ChronometerInputDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onSelect() as Boolean {
-        _controller.toggle();
-        _view.updateRefreshTimer();
-        WatchUi.requestUpdate();
+        try {
+            _controller.toggle();
+        } finally {
+            _view.updateRefreshTimer();
+            WatchUi.requestUpdate();
+        }
         return true;
     }
 }
