@@ -1,8 +1,8 @@
 # Gameplay specification
 
 This document records the agreed direction for Chrono Football. It describes
-the intended game; no platform implementation exists yet. Open decisions are
-listed separately and must not be treated as approved rules.
+the intended game; the initial Garmin app does not implement gameplay yet.
+Open decisions are listed separately and must not be treated as approved rules.
 
 ## Match setup
 

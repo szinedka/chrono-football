@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
+    <iq:application id="a87aa1d9-f371-4f16-93b0-69ba3f023948"
+                    type="watch-app"
+                    name="@Strings.AppName"
+                    entry="ChronoFootballApp"
+                    launcherIcon="@Drawables.LauncherIcon"
+                    minApiLevel="4.2.0">
+        <iq:products>
+            <iq:product id="vivoactive5"/>
+        </iq:products>
+        <iq:permissions/>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>
